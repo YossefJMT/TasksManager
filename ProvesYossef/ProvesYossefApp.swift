@@ -9,12 +9,12 @@ import SwiftUI
 
 @main
 struct ProvesYossefApp: App {
-    
-    @StateObject private var localData = LocalData.shared
+    @ObservedObject private var localData = LocalData.shared
 
-        var body: some Scene {
-            WindowGroup {
-                MainScreen().environmentObject(localData)
-            }
+    var body: some Scene {
+        WindowGroup {
+            MainScreen()
+                .environmentObject(localData) // Pasar localData como un entorno a MainScreen
         }
+    }
 }

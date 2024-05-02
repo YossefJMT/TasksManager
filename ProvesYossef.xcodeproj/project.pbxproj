@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1C0348BE2BE0DE290008F7D1 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0348BD2BE0DE290008F7D1 /* AddTaskView.swift */; };
+		1C0348C02BE389450008F7D1 /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0348BF2BE389450008F7D1 /* EditTaskView.swift */; };
 		1C71BCB42BDFA8E7008B65BE /* ProvesYossefApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C71BCB32BDFA8E7008B65BE /* ProvesYossefApp.swift */; };
 		1C71BCB62BDFA8E7008B65BE /* MainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C71BCB52BDFA8E7008B65BE /* MainScreen.swift */; };
 		1C71BCB82BDFA8E9008B65BE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C71BCB72BDFA8E9008B65BE /* Assets.xcassets */; };
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		1C0348BD2BE0DE290008F7D1 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
+		1C0348BF2BE389450008F7D1 /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
 		1C71BCB02BDFA8E7008B65BE /* ProvesYossef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProvesYossef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C71BCB32BDFA8E7008B65BE /* ProvesYossefApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvesYossefApp.swift; sourceTree = "<group>"; };
 		1C71BCB52BDFA8E7008B65BE /* MainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreen.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 			children = (
 				1C71BCE32BDFBA81008B65BE /* TaskCell.swift */,
 				1C0348BD2BE0DE290008F7D1 /* AddTaskView.swift */,
+				1C0348BF2BE389450008F7D1 /* EditTaskView.swift */,
 			);
 			path = components;
 			sourceTree = "<group>";
@@ -288,6 +291,7 @@
 				1C71BCB62BDFA8E7008B65BE /* MainScreen.swift in Sources */,
 				1C71BCDF2BDFB8B6008B65BE /* task.swift in Sources */,
 				1C71BCB42BDFA8E7008B65BE /* ProvesYossefApp.swift in Sources */,
+				1C0348C02BE389450008F7D1 /* EditTaskView.swift in Sources */,
 				1C0348BE2BE0DE290008F7D1 /* AddTaskView.swift in Sources */,
 				1C71BCE12BDFB90C008B65BE /* LocalData.swift in Sources */,
 				1C71BCE42BDFBA81008B65BE /* TaskCell.swift in Sources */,

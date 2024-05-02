@@ -6,54 +6,62 @@
 //
 import SwiftUI
 
-
+struct MainScreen: View {
+    @State private var showingAddTaskView = false // Estado para controlar la presentación de la hoja modal
+    @EnvironmentObject var localData: LocalData // Declaración de localData como un entorno
     
-    struct MainScreen: View {
-        @State private var showingAddTaskView = false // Estado para controlar la presentación de la hoja modal
-        @EnvironmentObject var localData: LocalData
-        
-        @Environment(\.colorScheme) var colorScheme // Obtener el esquema de color actual
-        
-        var body: some View {
-            NavigationView {
-                List {
-                    ForEach(localData.tasks) { task in
-                        TaskCell(task: task)
-                    }
-                    .onDelete(perform: deleteTask) // Permitir eliminar tareas
+    @Environment(\.colorScheme) var colorScheme // Obtener el esquema de color actual
+    
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(localData.tasks.indices, id: \.self) { index in
+                    TaskCell(task: $localData.tasks[index])
                 }
-                .navigationTitle("Tareas")
-                .navigationBarItems(
-                    leading: Button(action: {
-                        // Cambiar el esquema de color cuando se presiona el botón
-                        if colorScheme == .dark {
-                            UIApplication.shared.windows.first?.overrideUserInterfaceStyle = .light
-                        } else {
-                            UIApplication.shared.windows.first?.overrideUserInterfaceStyle = .dark
+                .onDelete(perform: deleteTasks) // Permitir eliminar tareas
+            }
+            .navigationTitle("Tareas")
+            .navigationBarItems(
+                leading: Button(action: {
+                    // Cambiar el esquema de color cuando se presiona el botón
+                    if #available(iOS 13.0, *) {
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                            windowScene.windows.first?.overrideUserInterfaceStyle = colorScheme == .dark ? .light : .dark
                         }
-                    }) {
-                        Image(systemName: "moon.circle.fill") // Icono de modo oscuro
-                            .foregroundColor(.primary) // Color primario del texto
-                    },
-                    trailing: Button(action: {
-                        // Mostrar la hoja modal de "Agregar Tarea"
-                        showingAddTaskView.toggle()
-                    }) {
-                        Image(systemName: "plus.circle.fill") // Icono de agregar
-                            .foregroundColor(Color("button"))
+                    } else {
+                        if let window = UIApplication.shared.windows.first {
+                            window.overrideUserInterfaceStyle = colorScheme == .dark ? .light : .dark
+                        }
                     }
-                )
-            }
-            .sheet(isPresented: $showingAddTaskView) {
-                // Mostrar la hoja modal de "Agregar Tarea"
-                AddTaskView()
-            }
+                }) {
+                    Image(systemName: "moon.circle.fill") // Icono de modo oscuro
+                        .foregroundColor(.primary) // Color primario del texto
+                },
+                trailing: Button(action: {
+                    // Mostrar la hoja modal de "Agregar Tarea"
+                    showingAddTaskView.toggle()
+                }) {
+                    Image(systemName: "plus.circle.fill") // Icono de agregar
+                        .foregroundColor(Color("button"))
+                }
+            )
+
         }
-        
-        func deleteTask(at offsets: IndexSet) {
-            localData.tasks.remove(atOffsets: offsets) // Eliminar la tarea seleccionada
+        .sheet(isPresented: $showingAddTaskView) {
+            // Mostrar la hoja modal de "Agregar Tarea"
+            AddTaskView()
         }
     }
+    
+    func deleteTasks(at offsets: IndexSet) {
+        // Convertir el conjunto de índices a un array de índices
+        let indexes = Array(offsets)
+        // Iterar sobre los índices y eliminar las tareas correspondientes
+        for index in indexes {
+            localData.deleteTask(at: index)
+        }
+    }
+}
 
 
 struct MainScreen_Previews: PreviewProvider {
@@ -70,6 +78,8 @@ struct MainScreen_Previews: PreviewProvider {
         localData.tasks = sampleTasks
         
         // Crear una instancia de MainScreen y pasar LocalData como entorno
-        return MainScreen().environmentObject(localData)
+        return MainScreen()
+            .environmentObject(localData)
     }
 }
+

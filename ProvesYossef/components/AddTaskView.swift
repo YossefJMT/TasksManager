@@ -2,7 +2,7 @@
 //  AddTaskView.swift
 //  ProvesYossef
 //
-//  Created by Novostorm7 on 30/4/24.
+//  Created by YossefJM on 30/4/24.
 //
 
 import SwiftUI
@@ -22,8 +22,9 @@ struct AddTaskView: View {
             .navigationBarItems(
                 trailing: Button(action: {
                     // Guardar la nueva tarea y cerrar la hoja modal
-                    LocalData.shared.addTask(title: title, description: description, completed: false)
-                    presentationMode.wrappedValue.dismiss()
+                    let newTask = Task(title: title, description: description, isCompleted: false)
+                    LocalData.shared.addTask(newTask)
+                        presentationMode.wrappedValue.dismiss()
                 }) {
                     Text("Add")
                         .fontWeight(Font.Weight.bold)

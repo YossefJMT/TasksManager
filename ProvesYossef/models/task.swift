@@ -2,29 +2,59 @@
 //  task.swift
 //  ProvesYossef
 //
-//  Created by Novostorm7 on 29/4/24.
+//  Created by YossefJM on 29/4/24.
 //
 
 import Foundation
-// Decodable significa que un tipo puede ser inicializado a partir de datos en formato JSON, permitiendo la decodificación de objetos desde una representación externa.
-// Encodable es para que un tipo pueda ser convertido a una representación en formato JSON, permitiendo la codificación de objetos en una representación externa.
-// Identifiable es un protocolo que indica que un tipo tiene una propiedad identificadora única, que es útil en vistas que requieren identificación de elementos en una lista, por ejemplo.
 
-
-class Task: Identifiable, Decodable, Encodable { // Conformamos Task a Identifiable y Decodable
-    var id: UUID
-    var title: String
-    var description: String
-    var creationDate: Date
-    var completed: Bool
+class Task: Identifiable, ObservableObject, Codable {
+    let id: UUID
+    @Published var title: String
+    @Published var description: String
+    @Published var isCompleted: Bool
     
-    init(title: String, description: String, completed: Bool) {
+    init(title: String, description: String, isCompleted: Bool) {
+        self.id = UUID()
         self.title = title
         self.description = description
-        self.completed = completed
-        self.creationDate = Date() // La fecha y hora de creación será la fecha actual
-        self.id = UUID() // Generar un UUID único para cada instancia de Task
-
+        self.isCompleted = isCompleted
+    }
+    init(id: UUID, title: String, description: String, isCompleted: Bool) {
+        self.id = id
+        self.title = title
+        self.description = description
+        self.isCompleted = isCompleted
+    }
+    
+    // Función para devolver una copia de la tarea
+    func returnCopy() -> Task {
+        return Task(id: self.id, title: self.title, description: self.description, isCompleted: self.isCompleted)
+    }
+    
+    func setTask(_ task: Task) {
+            self.title = task.title
+            self.description = task.description
+            self.isCompleted = task.isCompleted
+        }
+    
+    enum CodingKeys: String, CodingKey {
+        case id, title, description, isCompleted
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        description = try container.decode(String.self, forKey: .description)
+        isCompleted = try container.decode(Bool.self, forKey: .isCompleted)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(title, forKey: .title)
+        try container.encode(description, forKey: .description)
+        try container.encode(isCompleted, forKey: .isCompleted)
     }
 }
 

@@ -2,33 +2,33 @@
 //  TaskCell.swift
 //  ProvesYossef
 //
-//  Created by Novostorm7 on 29/4/24.
+//  Created by YossefJM on 29/4/24.
 //
 
 
 import SwiftUI
-
 struct TaskCell: View {
-    @Binding var task: Task // Usamos un Binding<Task> para que los cambios se reflejen automáticamente
-    
+    var task: Task
+
     var body: some View {
-        NavigationLink(destination: EditTaskView(task: task)) { // Pasamos $task para que se pueda editar
+        NavigationLink(destination: EditTaskView(task: task)) {
             HStack(alignment: .center, spacing: 12) {
                 Button(action: {
-                    toggleCompleted() // Llamamos a toggleCompleted para cambiar el estado de la tarea
+                    toggleCompleted()
                 }) {
-                    Image(systemName: task.completed ? "checkmark.circle.fill" : "circle")
-                        .foregroundColor(task.completed ? .green : .gray)
+                    Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                        .foregroundColor(task.isCompleted ? .green : .gray)
                         .imageScale(.large)
                 }
-                
+                .buttonStyle(PlainButtonStyle()) // No es necesario con PlainButtonStyle() porque el Button ya lo tiene
+
                 VStack(alignment: .leading, spacing: 8) {
                     Text(task.title)
                         .font(.headline)
-                        .foregroundColor(task.completed ? .gray : Color("headings"))
+                        .foregroundColor(task.isCompleted ? .gray : Color("headings"))
                         .lineLimit(1)
                         .truncationMode(.tail)
-                    
+
                     Text(task.description)
                         .font(.subheadline)
                         .foregroundColor(Color("description"))
@@ -38,22 +38,19 @@ struct TaskCell: View {
             }
             .padding(8)
         }
-        .buttonStyle(PlainButtonStyle())
     }
-    
+
     private func toggleCompleted() {
-        task.completed.toggle() // Cambiamos directamente la propiedad completed de la tarea
-        LocalData.shared.saveTasks() // Guardamos los cambios
+        withAnimation {
+            task.isCompleted.toggle() // Cambiar el estado de completitud de la tarea
+            LocalData.shared.toggleTaskCompletion(task) // Al hacer clic, actualizamos el estado en LocalData directamente
+        }
     }
 }
-
 
 struct TaskCell_Previews: PreviewProvider {
     static var previews: some View {
-        let sampleTask = Task(title: "Sample Task", description: "This is a sample task description.", completed: false)
-        // Creamos un Binding<Task> con la tarea de muestra
-        let binding = Binding<Task>(get: { sampleTask }, set: { _ in })
-        return TaskCell(task: binding)
+        let sampleTask = Task(title: "Sample Task", description: "This is a sample task description.", isCompleted: false)
+        return TaskCell(task: sampleTask)
     }
 }
-

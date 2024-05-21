@@ -2,66 +2,88 @@
 //  LocalData.swift
 //  ProvesYossef
 //
-//  Created by Novostorm7 on 29/4/24.
+//  Created by YossefJM on 29/4/24.
 //
 
+import Foundation
 import SwiftUI
 
 class LocalData: ObservableObject {
-    // Singleton para acceder a la misma instancia en toda la aplicación
     static let shared = LocalData()
+    @Published var pendingTasks: [Task] = []
+    @Published var completedTasks: [Task] = []
 
-    @Published var tasks: [Task] = []
+    private let pendingTasksKey = "PendingTasks"
+    private let completedTasksKey = "CompletedTasks"
 
-    private let tasksKey = "tasks"
+    private init() {
+        loadTasks()
+    }
 
-    public init() {
-        // Cargar tareas guardadas desde UserDefaults
-        if let savedTasksData = UserDefaults.standard.data(forKey: tasksKey) {
-            if let decodedTasks = try? JSONDecoder().decode([Task].self, from: savedTasksData) {
-                tasks = decodedTasks
-                return
+    func addTask(_ task: Task) {
+        if task.isCompleted {
+            completedTasks.append(task)
+        } else {
+            pendingTasks.append(task)
+        }
+        saveTasks()
+    }
+
+    func deleteTask(_ task: Task) {
+        if let index = pendingTasks.firstIndex(where: { $0.id == task.id }) {
+            pendingTasks.remove(at: index)
+        } else if let index = completedTasks.firstIndex(where: { $0.id == task.id }) {
+            completedTasks.remove(at: index)
+        }
+        saveTasks()
+    }
+
+    func toggleTaskCompletion(_ task: Task) {
+        if let index = pendingTasks.firstIndex(where: { $0.id == task.id }) {
+            // Cambiar el estado de isCompleted de la tarea y moverla a la lista correspondiente
+            pendingTasks[index].isCompleted = true
+            let completedTask = pendingTasks.remove(at: index)
+            completedTasks.append(completedTask)
+        } else if let index = completedTasks.firstIndex(where: { $0.id == task.id }) {
+            // Cambiar el estado de isCompleted de la tarea y moverla a la lista correspondiente
+            completedTasks[index].isCompleted = false
+            let pendingTask = completedTasks.remove(at: index)
+            pendingTasks.append(pendingTask)
+        }
+        saveTasks()
+    }
+
+
+
+    func editTask(updatedTask: Task) {
+        if let index = pendingTasks.firstIndex(where: { $0.id == updatedTask.id }) {
+            pendingTasks[index] = updatedTask
+        } else if let index = completedTasks.firstIndex(where: { $0.id == updatedTask.id }) {
+            completedTasks[index] = updatedTask
+        }
+        saveTasks()
+    }
+
+    private func loadTasks() {
+        if let pendingData = UserDefaults.standard.data(forKey: pendingTasksKey),
+           let completedData = UserDefaults.standard.data(forKey: completedTasksKey) {
+            let decoder = JSONDecoder()
+            if let pendingTasks = try? decoder.decode([Task].self, from: pendingData) {
+                self.pendingTasks = pendingTasks
+            }
+            if let completedTasks = try? decoder.decode([Task].self, from: completedData) {
+                self.completedTasks = completedTasks
             }
         }
-        // Si no hay datos guardados, añadir una tarea por defecto
-        let defaultTask = Task(title: "Tarea predeterminada", description: "Esta es una tarea predeterminada.", completed: false)
-        tasks.append(defaultTask)
     }
 
-    func saveTasks() {
-        // Guardar las tareas en UserDefaults
-        if let encodedTasks = try? JSONEncoder().encode(tasks) {
-            UserDefaults.standard.set(encodedTasks, forKey: tasksKey)
+    private func saveTasks() {
+        let encoder = JSONEncoder()
+        if let pendingTasksData = try? encoder.encode(pendingTasks) {
+            UserDefaults.standard.set(pendingTasksData, forKey: pendingTasksKey)
+        }
+        if let completedTasksData = try? encoder.encode(completedTasks) {
+            UserDefaults.standard.set(completedTasksData, forKey: completedTasksKey)
         }
     }
-
-    func addTask(title: String, description: String, completed: Bool) {
-        let newTask = Task(title: title, description: description, completed: completed)
-        tasks.append(newTask)
-        saveTasks() // Guardar las tareas actualizadas
-    }
-
-    func deleteTask(at index: Int) {
-        // Imprimir la tarea antes de eliminarla en la consola
-        print("Tarea a eliminar:", tasks[index].title)
-        
-        tasks.remove(at: index)
-        saveTasks() // Guardar las tareas actualizadas
-    }
-    
-    func editTask(task: Task) {
-        print("Tarea editada:", task.title, task.description, task.id )
-        print("Tarea a editar:", tasks[1].title, tasks[1].description, tasks[1].id )
-
-        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
-            print("Tarea a editar:", tasks[index].title, tasks[index].description, tasks[index].id )
-
-            tasks[index] = task // Reemplazar la tarea original con la tarea editada
-            saveTasks() // Guardar las tareas actualizadas
-        }
-    }
-
-
 }
-
-

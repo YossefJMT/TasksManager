@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 class LocalData: ObservableObject {
     static let shared = LocalData()
@@ -39,6 +38,7 @@ class LocalData: ObservableObject {
     }
 
     func toggleTaskCompletion(_ task: Task) {
+        objectWillChange.send() // Notificar cambios manualmente
         if let index = pendingTasks.firstIndex(where: { $0.id == task.id }) {
             // Cambiar el estado de isCompleted de la tarea y moverla a la lista correspondiente
             pendingTasks[index].isCompleted = true
@@ -52,8 +52,6 @@ class LocalData: ObservableObject {
         }
         saveTasks()
     }
-
-
 
     func editTask(updatedTask: Task) {
         if let index = pendingTasks.firstIndex(where: { $0.id == updatedTask.id }) {

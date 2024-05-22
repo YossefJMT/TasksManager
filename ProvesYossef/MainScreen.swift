@@ -17,11 +17,18 @@ struct MainScreen: View {
     var body: some View {
         NavigationView {
             List {
+                Button(action: {
+                    showingCompletedTasks.toggle()
+                }) {
+                    Text(showingCompletedTasks ? "Ocultar Completadas" : "Ver Completadas")
+                        .foregroundColor(.blue)
+                        .multilineTextAlignment(.trailing)
+                        
+                }
                 ForEach(tasksToShow) { task in TaskCell(task: task)}
                     .onDelete(perform: deleteTasks) // Permitir eliminar tareas
 
             }
-            
             .navigationTitle("Tareas")
             .navigationBarItems(
                 leading: Button(action: {
@@ -45,13 +52,6 @@ struct MainScreen: View {
                     }) {
                         Image(systemName: "plus.circle.fill") // Icono de agregar
                             .foregroundColor(Color("button"))
-                    }
-                    
-                    Button(action: {
-                        showingCompletedTasks.toggle()
-                    }) {
-                        Text(showingCompletedTasks ? "Ocultar Completadas" : "Ver Completadas")
-                            .foregroundColor(.blue)
                     }
                 }
             )

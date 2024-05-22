@@ -5,10 +5,10 @@
 //  Created by YossefJM on 29/4/24.
 //
 
-
 import SwiftUI
+
 struct TaskCell: View {
-    var task: Task
+    @ObservedObject var task: Task
 
     var body: some View {
         NavigationLink(destination: EditTaskView(task: task)) {
@@ -20,7 +20,7 @@ struct TaskCell: View {
                         .foregroundColor(task.isCompleted ? .green : .gray)
                         .imageScale(.large)
                 }
-                .buttonStyle(PlainButtonStyle()) // No es necesario con PlainButtonStyle() porque el Button ya lo tiene
+                .buttonStyle(PlainButtonStyle())
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text(task.title)
@@ -43,7 +43,7 @@ struct TaskCell: View {
     private func toggleCompleted() {
         withAnimation {
             task.isCompleted.toggle() // Cambiar el estado de completitud de la tarea
-            LocalData.shared.toggleTaskCompletion(task) // Al hacer clic, actualizamos el estado en LocalData directamente
+            LocalData.shared.toggleTaskCompletion(task) // Actualizar el estado en LocalData
         }
     }
 }

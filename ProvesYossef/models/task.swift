@@ -7,38 +7,54 @@
 
 import Foundation
 
+// Estructura para representar las subtareas
+struct SubTask: Identifiable, Codable {
+    var id: UUID = UUID()
+    var description: String
+    var isCompleted: Bool = false
+}
+
 class Task: Identifiable, ObservableObject, Codable {
-    let id: UUID
+    var id: UUID
     @Published var title: String
     @Published var description: String
     @Published var isCompleted: Bool
+    var dateCreation: Date
+    @Published var subTasks: [SubTask] // Array de subtareas
     
-    init(title: String, description: String, isCompleted: Bool) {
+    init(title: String, description: String, isCompleted: Bool, dateCreation: Date = Date(), subTasks: [SubTask] = []) {
         self.id = UUID()
         self.title = title
         self.description = description
         self.isCompleted = isCompleted
+        self.dateCreation = dateCreation
+        self.subTasks = subTasks
     }
-    init(id: UUID, title: String, description: String, isCompleted: Bool) {
+    
+    init(id: UUID, title: String, description: String, isCompleted: Bool, dateCreation: Date, subTasks: [SubTask]) {
         self.id = id
         self.title = title
         self.description = description
         self.isCompleted = isCompleted
+        self.dateCreation = dateCreation
+        self.subTasks = subTasks
     }
-    
-    // Función para devolver una copia de la tarea
+
     func returnCopy() -> Task {
-        return Task(id: self.id, title: self.title, description: self.description, isCompleted: self.isCompleted)
+        return Task(id: self.id, title: self.title, description: self.description, isCompleted: self.isCompleted, dateCreation: self.dateCreation, subTasks: self.subTasks)
     }
     
     func setTask(_ task: Task) {
-            self.title = task.title
-            self.description = task.description
-            self.isCompleted = task.isCompleted
-        }
-    
+        self.id = task.id
+        self.title = task.title
+        self.description = task.description
+        self.isCompleted = task.isCompleted
+        self.dateCreation = task.dateCreation
+        self.subTasks = task.subTasks
+    }
+
     enum CodingKeys: String, CodingKey {
-        case id, title, description, isCompleted
+        case id, title, description, isCompleted, dateCreation, subTasks
     }
     
     required init(from decoder: Decoder) throws {
@@ -47,6 +63,8 @@ class Task: Identifiable, ObservableObject, Codable {
         title = try container.decode(String.self, forKey: .title)
         description = try container.decode(String.self, forKey: .description)
         isCompleted = try container.decode(Bool.self, forKey: .isCompleted)
+        dateCreation = try container.decode(Date.self, forKey: .dateCreation)
+        subTasks = try container.decode([SubTask].self, forKey: .subTasks)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -55,6 +73,7 @@ class Task: Identifiable, ObservableObject, Codable {
         try container.encode(title, forKey: .title)
         try container.encode(description, forKey: .description)
         try container.encode(isCompleted, forKey: .isCompleted)
+        try container.encode(dateCreation, forKey: .dateCreation)
+        try container.encode(subTasks, forKey: .subTasks)
     }
 }
-
